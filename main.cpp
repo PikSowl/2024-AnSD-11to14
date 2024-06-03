@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <fstream>
 #include <algorithm>
 #include <vector>
@@ -35,7 +35,7 @@ void textInput(string& text){
 ///*
 // 11 Aho-Corasick algorithm
 
-const int abc_Size=28;
+const int abc_Size=78;
 
 struct bohr_vrtx{
     int next_vrtx[abc_Size],pat_num,suff_link,auto_move[abc_Size],par,suff_flink;
@@ -60,7 +60,7 @@ bohr_vrtx make_bohr_vrtx(int p,char c){
 void add_string_to_bohr(const string& s){
     int num=0;
     for (int i=0; i<s.length(); i++){
-        char ch=s[i]-'a';
+        char ch=s[i]-',';
         if (bohr[num].next_vrtx[ch]==-1){
             bohr.push_back(make_bohr_vrtx(num,ch));
             bohr[num].next_vrtx[ch]=bohr.size()-1;
@@ -96,14 +96,16 @@ int get_suff_link(int v){
 }
 
 int get_auto_move(int v, char ch){
+    ch -= ',';
     if (bohr[v].auto_move[ch]==-1)
         if (bohr[v].next_vrtx[ch]!=-1)
             bohr[v].auto_move[ch]=bohr[v].next_vrtx[ch];
-        else
-        if (v==0)
-            bohr[v].auto_move[ch]=0;
-        else
-            bohr[v].auto_move[ch]=get_auto_move(get_suff_link(v), ch);
+        else {
+            if (v == 0)
+                bohr[v].auto_move[ch] = 0;
+            else
+                bohr[v].auto_move[ch] = get_auto_move(get_suff_link(v), ch);
+        }
     return bohr[v].auto_move[ch];
 }
 
@@ -120,24 +122,24 @@ int get_suff_flink(int v){
 
 void check(int v,int i){
     for(int u=v;u!=0;u=get_suff_flink(u)){
-        if (bohr[u].flag) cout << i-pattern[bohr[u].pat_num].length()+1 << ':' << pattern[bohr[u].pat_num] << endl;
+        if (bohr[u].flag) cout << i-pattern[bohr[u].pat_num].length() << ':' << pattern[bohr[u].pat_num] << endl;
     }
 }
 
 void find_all_pos(const string& s){
     int u=0;
     for(int i=0;i<s.length();i++){
-        u=get_auto_move(u,s[i]-'a');
+        u = get_auto_move(u, s[i]); //-'a');
         check(u,i+1);
     }
 }
 
 void lab_11() { //Aho–Corasick
     bohr.push_back(make_bohr_vrtx(0,'$'));
-    add_string_to_bohr("eyes");
-    add_string_to_bohr("farm");
-    add_string_to_bohr("ores");
-    add_string_to_bohr("blue");
+    //add_string_to_bohr("eyes");
+    //add_string_to_bohr("farm");
+    //add_string_to_bohr("ores");
+    //add_string_to_bohr("blue");
     add_string_to_bohr("nail");
 
     string text;
